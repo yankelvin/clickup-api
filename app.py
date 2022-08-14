@@ -1,3 +1,4 @@
+from crypt import methods
 from flask import Flask, request
 from pprint import pprint
 
@@ -9,7 +10,12 @@ app = Flask(__name__)
 engine = Engine(authorization=authorization)
 
 
-@app.route('/get_tasks', methods=['GET'])
+@app.route('/', methods=['GET'])
+def init():
+    return "All Running"
+
+
+@app.route('api/get_tasks', methods=['GET'])
 def get_tasks():
     try:
         args = request.args
