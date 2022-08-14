@@ -1,4 +1,3 @@
-from crypt import methods
 from flask import Flask, request
 from pprint import pprint
 
@@ -15,7 +14,7 @@ def init():
     return "All Running"
 
 
-@app.route('api/get_tasks', methods=['GET'])
+@app.route('/api/get_tasks', methods=['GET'])
 def get_tasks():
     try:
         args = request.args
