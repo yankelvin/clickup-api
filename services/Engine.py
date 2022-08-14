@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 
-from TeamApi import TeamApi
-from SpaceApi import SpaceApi
-from FolderApi import FolderApi
-from ListApi import ListApi
-from TaskApi import TaskApi
+from services.TeamApi import TeamApi
+from services.SpaceApi import SpaceApi
+from services.FolderApi import FolderApi
+from services.ListApi import ListApi
+from services.TaskApi import TaskApi
 
 
 class Engine:
