@@ -1,9 +1,9 @@
+import os
 from flask import Flask, request
-from pprint import pprint
 
 from Engine import Engine
 
-authorization = "pk_6381265_FIKH47ASHJZ43DPAPEVBNVLRV30ZQXT7"
+authorization = os.environ.get('AUTHORIZATION', None)
 
 app = Flask(__name__)
 engine = Engine(authorization=authorization)
