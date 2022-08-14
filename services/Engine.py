@@ -50,7 +50,10 @@ class Engine:
             folder_id=folder_id, list_name=list_name)
         list_id = _list["id"]
 
-        tasks = tasks + self.task_api.get_tasks(list_id=list_id)
+        list_tasks = self.task_api.get_tasks(list_id=list_id)
+        tasks = tasks + \
+            [{"list_name": _list["name"], "tasks": list_tasks}]
+
         return tasks
 
     def __get_all_tasks_by_folder(self, folder_id, tasks):
