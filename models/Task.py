@@ -99,15 +99,6 @@ class Status:
         self.type = type
 
 
-class Parent:
-    id: str
-    name: str
-
-    def __init__(self, id: str, name: str) -> None:
-        self.id = id
-        self.name = name
-
-
 class Task:
     archived: bool
     assignees: List[Creator]
@@ -127,7 +118,7 @@ class Task:
     list: Folder
     name: str
     orderindex: str
-    parent: Parent
+    parent: str
     permission_level: str
     points: int
     priority: None
@@ -143,7 +134,7 @@ class Task:
     url: str
     watchers: List[Any]
 
-    def __init__(self, archived: bool, assignees: List[Creator], checklists: List[Any], creator: Creator, custom_fields: List[CustomField], custom_id: None, date_closed: None, date_created: str, date_updated: str, dependencies: List[Any], description: str, due_date: str, folder: Folder, id: str, linked_tasks: List[Any], list: Folder, name: str, orderindex: str, parent: Parent, permission_level: str, points: int, priority: None, project: Folder, space: Space, start_date: str, status: Status, tags: List[Any], team_id: int, text_content: str, time_estimate: None, time_spent: int, url: str, watchers: List[Any]) -> None:
+    def __init__(self, archived: bool, assignees: List[Creator], checklists: List[Any], creator: Creator, custom_fields: List[CustomField], custom_id: None, date_closed: None, date_created: str, date_updated: str, dependencies: List[Any], description: str, due_date: str, folder: Folder, id: str, linked_tasks: List[Any], list: Folder, name: str, orderindex: str, parent: str, permission_level: str, points: int, priority: None, project: Folder, space: Space, start_date: str, status: Status, tags: List[Any], team_id: int, text_content: str, time_estimate: None, time_spent: int, url: str, watchers: List[Any]) -> None:
         self.archived = archived
         self.assignees = assignees
         self.checklists = checklists

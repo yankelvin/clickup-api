@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from typing import List
-from models.Task import Task
+from models.Task import CustomField, Task
 from models.TaskViewModel import TaskViewModel
 
 from services.TeamApi import TeamApi
@@ -70,13 +70,24 @@ class Engine:
         view_model_tasks = []
 
         for task in tasks:
-            assignees = [Creator.username for Creator in task.assignees]
-            view_model_task = TaskViewModel(task.id, task.name, task.status.status, ", ".join(
-                assignees), task.due_date, task.start_date, task.date_created, task.date_closed, task.list.name, task.points, None, task.parent.id, task.parent.name)
+            assignees = [creator["username"] for creator in task["assignees"]]
+            assignee = ", ".join(assignees)
 
-            view_model_tasks.append(view_model_task)
+            category: CustomField = list(filter(
+                lambda field: field["name"] == "CATEGORIA", task["custom_fields"]))[0]
 
-        return view_model_task
+            category_name = "Não selecionado."
+
+            if "value" in category:
+                category_name = list(filter(
+                    lambda option: option["orderindex"] == category["value"], category["type_config"]["options"]))[0]
+
+            view_model_task = TaskViewModel(task["id"], task["name"], task["status"]["status"], assignee, task["due_date"], task["start_date"],
+                                            task["date_created"], task["date_closed"], task["list"]["name"], task["points"], category_name, task["parent"])
+
+            view_model_tasks.append(view_model_task.__dict__)
+
+        return view_model_tasks
 
     def __get_folder_id(self, folder_name, space_id):
         folder_id = self.get_cache_value("folder_id")
