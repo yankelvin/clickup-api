@@ -80,7 +80,7 @@ class Engine:
 
             if "value" in category:
                 category_name = list(filter(
-                    lambda option: option["orderindex"] == category["value"], category["type_config"]["options"]))[0]
+                    lambda option: option["orderindex"] == category["value"], category["type_config"]["options"]))[0]["name"]
 
             view_model_task = TaskViewModel(task["id"], task["name"], task["status"]["status"], assignee, task["due_date"], task["start_date"],
                                             task["date_created"], task["date_closed"], task["list"]["name"], task["points"], category_name, task["parent"])
