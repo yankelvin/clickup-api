@@ -8,12 +8,23 @@ class TaskApi:
         self.authorization = authorization
 
     def get_tasks(self, list_id: str) -> List[Task]:
-        url = f"https://api.clickup.com/api/v2/list/{list_id}/task?subtasks=true"
+        tasks: List[Task] = []
+        page = 0
 
-        payload = ""
-        headers = {"Authorization": self.authorization}
+        while True:
+            url = f"https://api.clickup.com/api/v2/list/{list_id}/task?subtasks=true&page={page}"
 
-        response = requests.request("GET", url, data=payload, headers=headers)
-        tasks = response.json()["tasks"]
+            payload = ""
+            headers = {"Authorization": self.authorization}
+
+            response = requests.request(
+                "GET", url, data=payload, headers=headers)
+            response_tasks = response.json()["tasks"]
+
+            if len(response_tasks) == 0:
+                break
+
+            tasks = tasks + response_tasks
+            page += 1
 
         return tasks
