@@ -1,4 +1,7 @@
 from datetime import datetime, timedelta
+from typing import List
+from models.Task import Task
+from models.TaskViewModel import TaskViewModel
 
 from services.TeamApi import TeamApi
 from services.SpaceApi import SpaceApi
@@ -45,25 +48,35 @@ class Engine:
 
         return tasks
 
+    def __get_all_tasks_by_folder(self, folder_id, tasks):
+        lists = self.list_api.get_lists(folder_id=folder_id)
+        for _list in lists:
+            list_tasks = self.task_api.get_tasks(list_id=_list["id"])
+            tasks = tasks + self.__map_tasks(list_tasks)
+
+        return tasks
+
     def __get_all_tasks_by_list(self, list_name, folder_id, tasks):
         _list = self.list_api.get_list(
             folder_id=folder_id, list_name=list_name)
         list_id = _list["id"]
 
         list_tasks = self.task_api.get_tasks(list_id=list_id)
-        tasks = tasks + \
-            [{"list_name": _list["name"], "tasks": list_tasks}]
+        tasks = tasks + self.__map_tasks(list_tasks)
 
         return tasks
 
-    def __get_all_tasks_by_folder(self, folder_id, tasks):
-        lists = self.list_api.get_lists(folder_id=folder_id)
-        for _list in lists:
-            list_tasks = self.task_api.get_tasks(list_id=_list["id"])
-            tasks = tasks + \
-                [{"list_name": _list["name"], "tasks": list_tasks}]
+    def __map_tasks(self, tasks: List[Task]):
+        view_model_tasks = []
 
-        return tasks
+        for task in tasks:
+            assignees = [Creator.username for Creator in task.assignees]
+            view_model_task = TaskViewModel(task.id, task.name, task.status.status, ", ".join(
+                assignees), task.due_date, task.start_date, task.date_created, task.date_closed, task.list.name, task.points, None, task.parent.id, task.parent.name)
+
+            view_model_tasks.append(view_model_task)
+
+        return view_model_task
 
     def __get_folder_id(self, folder_name, space_id):
         folder_id = self.get_cache_value("folder_id")
