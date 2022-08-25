@@ -94,7 +94,7 @@ class Engine:
         category: CustomField = list(filter(
             lambda field: field["name"] == "CATEGORIA", task["custom_fields"]))[0]
 
-        category_name = "Não selecionado."
+        category_name = ""
 
         if "value" in category:
             category_name = list(filter(

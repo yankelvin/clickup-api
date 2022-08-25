@@ -50,4 +50,4 @@ class TaskDTO:
 
     def __timestamp_to_datetime(self, due_date: str):
         return datetime.fromtimestamp(
-            int(due_date) / 1000).strftime("%d/%m/%Y - %H:%M:%S")
+            int(due_date) / 1000).strftime("%d/%m/%Y %H:%M:%S")
