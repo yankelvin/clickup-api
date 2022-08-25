@@ -35,8 +35,6 @@ class TaskApi:
 
             for response in response_tasks:
                 if len(response["tasks"]) == 0:
-                    print(
-                        f"Obter Tasks Página {page} --- {(time() - start_time):2f} seconds ---")
                     finish = True
                     break
                 else:
