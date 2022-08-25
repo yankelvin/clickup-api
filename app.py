@@ -15,7 +15,7 @@ def init():
 
 
 @app.route('/api/get_tasks', methods=['GET'])
-def get_tasks():
+async def get_tasks():
     try:
         args = request.args
         team_name = args.get("team_name")
@@ -23,8 +23,8 @@ def get_tasks():
         folder_name = args.get("folder_name")
         list_name = args.get("list_name")
 
-        tasks = engine.get_tasks(team_name=team_name, space_name=space_name,
-                                 folder_name=folder_name, list_name=list_name)
+        tasks = await engine.get_tasks(team_name=team_name, space_name=space_name,
+                                       folder_name=folder_name, list_name=list_name)
 
         return tasks
     except Exception as ex:
