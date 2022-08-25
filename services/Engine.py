@@ -1,3 +1,4 @@
+from time import time
 from typing import List
 from datetime import datetime, timedelta
 
@@ -36,34 +37,53 @@ class Engine:
         self.cache[value_name] = value
 
     async def get_tasks(self, team_name: str, space_name: str, folder_name: str, list_name):
+        start_time = time()
+        
         team_id = self.__get_team_id(team_name)
         space_id = self.__get_space_id(space_name, team_id)
         folder_id = self.__get_folder_id(folder_name, space_id)
-
+        
+        print(f"Obter Folder --- {(time() - start_time):2f} seconds ---")
+        
         tasks = []
 
         if list_name is None:
             tasks = await self.__get_all_tasks_by_folder(folder_id, tasks)
         else:
             tasks = await self.__get_all_tasks_by_list(list_name, folder_id, tasks)
-
+        
+        print(f"Fim --- {(time() - start_time):2f} seconds ---")
         return tasks
 
     async def __get_all_tasks_by_folder(self, folder_id, tasks):
+        start_time = time()
         lists = self.list_api.get_lists(folder_id=folder_id)
+        print(f"Obter Listas --- {(time() - start_time):2f} seconds ---")
         for _list in lists:
-            list_tasks = self.task_api.get_tasks(list_id=_list["id"])
+            start_time = time()
+            list_tasks = await self.task_api.get_tasks(list_id=_list["id"])
+            print(f"Obter Tasks - Lista: {_list['id']} --- {(time() - start_time):2f} seconds ---")
+            
+            start_time = time()
             tasks = tasks + await self.__map_tasks(list_tasks)
+            print(f"Mapear Tasks --- {(time() - start_time):2f} seconds ---")
 
         return tasks
 
     async def __get_all_tasks_by_list(self, list_name, folder_id, tasks):
+        start_time = time()
         _list = self.list_api.get_list(
             folder_id=folder_id, list_name=list_name)
         list_id = _list["id"]
+        print(f"Obter Lista --- {(time() - start_time):2f} seconds ---")
 
-        list_tasks = self.task_api.get_tasks(list_id=list_id)
+        start_time = time()
+        list_tasks = await self.task_api.get_tasks(list_id=list_id)
+        print(f"Obter Tasks - Lista: {_list['id']} --- {(time() - start_time):2f} seconds ---")
+        
+        start_time = time()
         tasks = tasks + await self.__map_tasks(list_tasks)
+        print(f"Mapear Tasks --- {(time() - start_time):2f} seconds ---")
 
         return tasks
 
