@@ -35,51 +35,42 @@ class Engine:
 
     def set_cache_value(self, value_name: str, value: str):
         self.cache[value_name] = value
-        
-    def get_lists(self, team_name: str, space_name: str, folder_name: str):
-        team_id = self.__get_team_id(team_name)
-        space_id = self.__get_space_id(space_name, team_id)
-        folder_id = self.__get_folder_id(folder_name, space_id)
-        lists = self.list_api.get_lists(folder_id=folder_id)
-        
-        return lists
 
-    def get_tasks(self, team_name: str, space_name: str, folder_name: str, list_name: str, page: int):
+    async def get_tasks(self, team_name: str, space_name: str, folder_name: str, list_name):
         start_time = time()
-
+        
         team_id = self.__get_team_id(team_name)
         space_id = self.__get_space_id(space_name, team_id)
         folder_id = self.__get_folder_id(folder_name, space_id)
-
+        
         print(f"Obter Folder --- {(time() - start_time):2f} seconds ---")
-
+        
         tasks = []
 
         if list_name is None:
-            tasks = self.__get_all_tasks_by_folder(folder_id, tasks, page)
+            tasks = await self.__get_all_tasks_by_folder(folder_id, tasks)
         else:
-            tasks = self.__get_all_tasks_by_list(list_name, folder_id, tasks, page)
-
+            tasks = await self.__get_all_tasks_by_list(list_name, folder_id, tasks)
+        
         print(f"Fim --- {(time() - start_time):2f} seconds ---")
         return tasks
 
-    def __get_all_tasks_by_folder(self, folder_id, tasks, page):
+    async def __get_all_tasks_by_folder(self, folder_id, tasks):
         start_time = time()
         lists = self.list_api.get_lists(folder_id=folder_id)
         print(f"Obter Listas --- {(time() - start_time):2f} seconds ---")
         for _list in lists:
             start_time = time()
-            list_tasks = self.task_api.get_tasks(list_id=_list["id"], page=page)
-            print(
-                f"Obter Tasks - Lista: {_list['id']} --- {(time() - start_time):2f} seconds ---")
-
+            list_tasks = await self.task_api.get_tasks(list_id=_list["id"])
+            print(f"Obter Tasks - Lista: {_list['id']} --- {(time() - start_time):2f} seconds ---")
+            
             start_time = time()
-            tasks = tasks + self.__map_tasks(list_tasks)
+            tasks = tasks + await self.__map_tasks(list_tasks)
             print(f"Mapear Tasks --- {(time() - start_time):2f} seconds ---")
 
         return tasks
 
-    def __get_all_tasks_by_list(self, list_name, folder_id, tasks, page):
+    async def __get_all_tasks_by_list(self, list_name, folder_id, tasks):
         start_time = time()
         _list = self.list_api.get_list(
             folder_id=folder_id, list_name=list_name)
@@ -87,17 +78,16 @@ class Engine:
         print(f"Obter Lista --- {(time() - start_time):2f} seconds ---")
 
         start_time = time()
-        list_tasks = self.task_api.get_tasks(list_id=list_id, page=page)
-        print(
-            f"Obter Tasks - Lista: {_list['id']} --- {(time() - start_time):2f} seconds ---")
-
+        list_tasks = await self.task_api.get_tasks(list_id=list_id)
+        print(f"Obter Tasks - Lista: {_list['id']} --- {(time() - start_time):2f} seconds ---")
+        
         start_time = time()
-        tasks = tasks + self.__map_tasks(list_tasks)
+        tasks = tasks + await self.__map_tasks(list_tasks)
         print(f"Mapear Tasks --- {(time() - start_time):2f} seconds ---")
 
         return tasks
 
-    def __map_tasks(self, tasks: List[Task]):
+    async def __map_tasks(self, tasks: List[Task]):
         task_dtos = []
 
         for task in tasks:
