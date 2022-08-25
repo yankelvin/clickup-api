@@ -42,7 +42,7 @@ class TaskApi:
                 else:
                     tasks = tasks + response["tasks"]
 
-        return tasksß
+        return tasks
 
     async def get(self, url, session):
         try:
