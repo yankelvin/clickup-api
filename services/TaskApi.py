@@ -41,6 +41,7 @@ class TaskApi:
 
     async def get(self, url, session):
         try:
+            print(url)
             async with session.get(url=url) as response:
                 resp = await response.json()
                 return resp
